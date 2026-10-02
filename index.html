@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Curve &amp; Tape</title>
+  <meta name="description" content="Treasury yields (2Y, 10Y, 20Y, 30Y) against SPY, QQQ, DIA and IWM, with rolling correlation and rate sensitivity.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="brand">
+        <div class="wordmark">Curve <span>&amp;</span> Tape</div>
+        <div class="tagline">Treasury yields against US equities</div>
+      </div>
+      <div class="top-controls">
+        <div class="seg" id="interval" role="radiogroup" aria-label="Candle interval"></div>
+        <span class="btn status" role="status">
+          <span class="dot" id="status-dot"></span><span id="status-text">Connecting…</span>
+        </span>
+      </div>
+    </header>
+
+    <section class="kpis" id="kpis" aria-label="Latest Treasury yields"></section>
+
+    <section class="charts">
+      <article class="panel">
+        <header class="panel-head">
+          <h2><i class="sw sw-yield"></i>Treasury yields</h2>
+          <div class="tabs" id="yield-tabs" role="tablist" aria-label="Yield maturity"></div>
+        </header>
+        <div class="chart-body">
+          <div class="fill" id="yield-lwc"></div>
+          <div class="chart-tag" id="yield-tag"></div>
+        </div>
+      </article>
+      <article class="panel">
+        <header class="panel-head">
+          <h2><i class="sw sw-equity"></i>Equity indices</h2>
+          <div class="tabs" id="equity-tabs" role="tablist" aria-label="Equity index"></div>
+        </header>
+        <div class="chart-body">
+          <div class="fill" id="equity-lwc"></div>
+          <div class="chart-tag" id="equity-tag"></div>
+        </div>
+      </article>
+    </section>
+    <p class="attrib">Both charts refresh every 30 seconds: yields are Tradeweb prices and equities are real-time ETF prices (DIA tracks the Dow), via CNBC. Hover either chart to line up the same moment on both. Charts by <a href="https://www.tradingview.com/lightweight-charts/" rel="noopener" target="_blank">TradingView Lightweight Charts</a>.</p>
+
+    <section class="corr">
+      <header class="section-head">
+        <div>
+          <h2>How yields and stocks move together</h2>
+          <p class="sub" id="corr-sub">Correlation of yield changes (bp) with index returns (%).</p>
+        </div>
+        <div class="corr-controls">
+          <label class="ctl"><span>Frequency</span>
+            <select id="freq">
+              <option value="H">Hourly</option>
+              <option value="D">Daily</option>
+              <option value="W">Weekly</option>
+              <option value="M">Monthly</option>
+            </select>
+          </label>
+          <label class="ctl"><span>Window</span>
+            <select id="window"></select>
+          </label>
+        </div>
+      </header>
+      <p class="note" id="sample-note" hidden></p>
+
+      <div class="corr-grid">
+        <article class="card heat-card">
+          <h3>Correlation matrix <small id="heat-range"></small></h3>
+          <div class="heat" id="heat"></div>
+          <div class="legend">
+            <span>−1 opposite</span><div class="legend-bar"></div><span>together +1</span>
+          </div>
+          <p class="hint">Click a cell to load that pair into the charts above.</p>
+        </article>
+
+        <article class="card pair-card">
+          <div class="pair-top">
+            <div>
+              <h3 id="pair-title">10Y vs SPY</h3>
+              <div class="pair-stats">
+                <div class="stat"><span class="k">Correlation</span><span class="v" id="pair-corr">–</span></div>
+                <div class="stat"><span class="k">Per +10bp in yield</span><span class="v" id="pair-beta">–</span></div>
+                <div class="stat"><span class="k">One window ago</span><span class="v" id="pair-prev">–</span></div>
+              </div>
+            </div>
+            <span class="chip" id="pair-chip">–</span>
+          </div>
+          <p class="pair-read" id="pair-read"></p>
+          <div class="mini-chart" id="rolling-chart"></div>
+        </article>
+      </div>
+
+      <div class="corr-grid lower">
+        <article class="card">
+          <h3>Curve shape <small>spreads in basis points</small></h3>
+          <div class="legend-inline">
+            <span><i style="background:var(--yield)"></i>2s10s (10Y − 2Y)</span>
+            <span><i style="background:var(--equity)"></i>10s30s (30Y − 10Y)</span>
+          </div>
+          <div class="mini-chart tall" id="spread-chart"></div>
+        </article>
+        <article class="card read-card">
+          <h3>Reading the numbers</h3>
+          <dl>
+            <dt>Positive correlation</dt>
+            <dd>Yields and stocks rise together. Usually growth optimism: good economic news lifts both.</dd>
+            <dt>Negative correlation</dt>
+            <dd>Rising yields push stocks down. Typical when inflation or Fed tightening drives rates, as in 2022.</dd>
+            <dt>Per +10bp</dt>
+            <dd>The average index move when that yield rises 10 basis points (0.10%) over one period.</dd>
+            <dt>Inverted curve</dt>
+            <dd>2s10s below zero means 2-year yields sit above 10-year yields, a classic late-cycle signal.</dd>
+          </dl>
+        </article>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <p>Yields and correlation prices: Tradeweb and exchange data via <a href="https://www.cnbc.com/bonds/" target="_blank" rel="noopener">CNBC</a>. Backup yields: <a href="https://fred.stlouisfed.org/" target="_blank" rel="noopener">FRED</a>, Federal Reserve Bank of St. Louis.</p>
+      <p>For information only. Not investment advice.</p>
+    </footer>
+  </div>
+
+  <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
