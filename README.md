@@ -3,17 +3,36 @@
 A live dashboard showing how US Treasury yields (2Y, 10Y, 20Y, 30Y) move against the major equity
 indices (SPY, QQQ, DIA, IWM).
 
-![Curve & Tape: 10Y Treasury yield and SPY on linked 1-minute charts](docs/screenshot.jpg)
+![Curve & Tape dashboard: live yield strip, 10Y Treasury and SPY daily candles](docs/overview.jpg)
 
 ## Features
-- **Live candles for yields and equities** from 1-minute to yearly, on one shared interval control
-- **Linked charts:** hover or scroll one chart and the other follows to the same moment
-- **Yield strip:** live 2Y/10Y/20Y/30Y with daily change, plus 2s10s and 10s30s curve spreads
-- **Correlation matrix:** every yield against every index (hourly, daily, weekly or monthly) with
-  change from the previous window; click a cell to load that pair
-- **Rate sensitivity:** the average index move per +10bp rise in yield, with a plain-English reading
-- **Rolling correlation** and **curve shape** charts
-- Plain HTML, CSS and JavaScript with no build step; two small serverless functions relay the data
+
+### Live yields and equities, side by side
+- **Yield strip:** live 2Y, 10Y, 20Y and 30Y yields with the day's change in basis points and a
+  six-month sparkline, plus the 2s10s and 10s30s curve spreads (flagged when inverted)
+- **Candle charts** for any maturity (left) and SPY, QQQ, DIA or IWM (right), refreshed every 30 seconds
+- **One interval control** for both charts: 1m, 5m, 15m, 1h, 4h, 1D, 1W, 1M, 1Y
+
+### Linked charts
+Hover a candle on either chart and the other marks the same moment; scroll or zoom one and the other
+follows. Below, at 11:03 the 10Y was 5.247% and SPY was 770.15.
+
+![Linked 1-minute charts with a shared crosshair](docs/linked-charts.jpg)
+
+### Correlation workbench
+- **Correlation matrix:** every yield against every index, with the change since the previous window.
+  Click a cell to load that pair into the charts
+- **Hourly, daily, weekly or monthly** frequency, with a choice of window length
+- **Rate sensitivity:** the average index move for every +10bp rise in yield
+- **Plain-English reading** of the current relationship (moving together, moving opposite or weak link)
+- **Rolling correlation** chart to show how the relationship has shifted over time
+- **Curve shape** chart of the 2s10s and 10s30s spreads
+
+![Correlation matrix, rate sensitivity and rolling correlation](docs/correlation.jpg)
+
+### Built simply
+Plain HTML, CSS and JavaScript with no build step. Two small serverless functions relay the market data,
+and the page falls back to FRED daily yields automatically if the live feed is down.
 
 ## Data
 | What | Source |
